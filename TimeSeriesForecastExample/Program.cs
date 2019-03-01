@@ -34,7 +34,7 @@ namespace TimeSeriesForecastExample
                 if (i == 5) inputTimeSeries.Add(new TimeSeriesItem<double>() { Time = dateNow.AddSeconds(count+1010), Value = count });
             }
 
-            var predictedTimeSeries = TimeSeriesPrediction.HoltWinters(inputTimeSeries, TimeSpan.FromSeconds(1));
+            var predictedTimeSeries = TimeSeriesPrediction.HoltWinters(inputTimeSeries);
 
             for (int i = 0; i < predictedTimeSeries["Prediction"].Count; i++)
             {

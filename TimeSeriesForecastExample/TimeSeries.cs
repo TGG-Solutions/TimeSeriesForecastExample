@@ -44,17 +44,21 @@ namespace TimeSeriesForecastExample
         {
             var evenlySpaced = new List<TimeSeriesItem<double>>();
 
+            // TODO: Need to decide on the Time Span!
+            // Short time ranges use Seconds, then Minutes, then Hours, then Weeks etc.
+            var samplingRate = TimeSpan.FromSeconds(1);
+
             evenlySpaced = sampledInputValues.Resample(
                 sampledInputValues.Min(a => a.Time), 
-                sampledInputValues.Max(a => a.Time), 
-                TimeSpan.FromSeconds(1), 
+                sampledInputValues.Max(a => a.Time),
+                samplingRate, 
                 data => data.Time, 
                 (curDate, data1, data2, t) => new TimeSeriesItem<double> { Time = curDate, Value = data1.Value + ((data2.Value - data1.Value) * t) }).ToList();
 
             return evenlySpaced;
         }
 
-        public static Dictionary<string, List<TimeSeriesItem<double>>> HoltWinters(List<TimeSeriesItem<double>> sampledInputValues, TimeSpan sampleInterval)
+        public static Dictionary<string, List<TimeSeriesItem<double>>> HoltWinters(List<TimeSeriesItem<double>> sampledInputValues)
         {
             // Need evenly spaced data.
             // If evenly spaced data is supplied then great, otherwise we need to interpolate the data (from first value to the last value).
@@ -62,6 +66,8 @@ namespace TimeSeriesForecastExample
             {
                 sampledInputValues = InterpolateRawValuesEvenly(sampledInputValues);
             }
+
+            var sampleInterval = TimeSpan.FromSeconds((sampledInputValues[1].Time - sampledInputValues[0].Time).TotalSeconds);
 
             // Our Return Value
             var predictedValues = new Dictionary<string, List<TimeSeriesItem<double>>>();
